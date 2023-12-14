@@ -120,7 +120,7 @@ public struct Incident: Codable, Equatable, ForeignMemberContainer {
     }
     var rawKind: String
     /// Short description of an incident. May be used as an additional info.
-    public var description: String
+    public var description: String?
     /// Date when incident item was created.
     public var creationDate: Date
     /// Date when incident happened.
@@ -164,7 +164,7 @@ public struct Incident: Codable, Equatable, ForeignMemberContainer {
     
     public init(identifier: String,
                 type: Kind,
-                description: String,
+                description: String? = nil,
                 creationDate: Date,
                 startDate: Date,
                 endDate: Date,
@@ -209,7 +209,7 @@ public struct Incident: Codable, Equatable, ForeignMemberContainer {
         identifier = try container.decode(String.self, forKey: .identifier)
         rawKind = try container.decode(String.self, forKey: .type)
         
-        description = try container.decode(String.self, forKey: .description)
+        description = try? container.decodeIfPresent(String.self, forKey: .description)
         
         if let date = formatter.date(from: try container.decode(String.self, forKey: .creationDate)) {
             creationDate = date
@@ -262,7 +262,7 @@ public struct Incident: Codable, Equatable, ForeignMemberContainer {
         
         try container.encode(identifier, forKey: .identifier)
         try container.encode(rawKind, forKey: .type)
-        try container.encode(description, forKey: .description)
+        try container.encodeIfPresent(description, forKey: .description)
         try container.encode(formatter.string(from: creationDate), forKey: .creationDate)
         try container.encode(formatter.string(from: startDate), forKey: .startDate)
         try container.encode(formatter.string(from: endDate), forKey: .endDate)
